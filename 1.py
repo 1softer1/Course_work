@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import cmath
 
 R1 = 10.0          # ОМ
 R3 = 20.0          # ОМ
@@ -11,12 +12,12 @@ C4 = 0.00025       # Ф
 L1 = 0.001         # Гн
 L3 = 0.011         # Гн
 U = 110.0          # Вольт
-f = 20.0           # Гц
+F = 20.0           # Гц
 
 j = (-1)**0.5
-omega = 2 * np.pi * f
+omega = 2 * np.pi * F
 num_points = 1000
-T = 1 / f
+T = 1 / F
 dt = T / num_points
 
 X_l1 = omega * L1
@@ -69,4 +70,92 @@ U44 = abs(U4)
 U55 = abs(U5)
 U66 = abs(U6)
 
+B1 = I1.real
+B2 = I2.real
+B3 = I3.real
+B4 = I4.real
+B5 = I5.real
+B6 = I6.real
 
+A1 = I1.imag
+A2 = I2.imag
+A3 = I3.imag
+A4 = I4.imag
+A5 = I5.imag
+A6 = I6.imag
+
+ARG_I1 = (cmath.atan(A1/B1) * 180/cmath.acos(-1)).real
+ARG_I2 = (cmath.atan(A2/B2) * 180/cmath.acos(-1)).real
+ARG_I3 = (cmath.atan(A3/B3) * 180/cmath.acos(-1)).real
+ARG_I4 = (-cmath.acos(-1)* 180/cmath.acos(-1) + cmath.atan(A4/B4) * 180/cmath.acos(-1)).real
+ARG_I5 = (cmath.atan(A5/B5) * 180/cmath.acos(-1)).real
+ARG_I6 = (cmath.atan(A6/B6) * 180/cmath.acos(-1)).real
+
+B11 = U1.real
+B22 = U2.real
+B33 = U3.real
+B44 = U4.real
+B55 = U5.real
+B66 = U6.real
+
+A11 = U1.imag
+A22 = U2.imag
+A33 = U3.imag
+A44 = U4.imag
+A55 = U5.imag
+A66 = U6.imag
+
+ARG_U1 = (cmath.atan(A11/B11) * 180/cmath.acos(-1)).real
+ARG_U2 = (cmath.acos(-1)* 180/cmath.acos(-1) + cmath.atan(A22/B22) * 180/cmath.acos(-1)).real
+ARG_U3 = (cmath.atan(A33/B33) * 180/cmath.acos(-1)).real
+ARG_U4 = (cmath.acos(-1)* 180/cmath.acos(-1) + cmath.atan(A44/B44) * 180/cmath.acos(-1)).real
+ARG_U5 = (cmath.atan(A55/B55) * 180/cmath.acos(-1)).real
+ARG_U6 = (cmath.atan(A66/B66) * 180/cmath.acos(-1)).real
+
+t = np.linspace(0, T, num_points)
+
+i1 = I11 * np.sin(2 * cmath.acos(-1) * F * t + ARG_I1 - cmath.acos(-1)/1.5)
+i2 = I22 * np.sin(2 * cmath.acos(-1) * F * t + ARG_I2 - cmath.acos(-1)/1.5)
+i3 = -(I33 * np.sin(2 * cmath.acos(-1) * F * t + ARG_I3 - cmath.acos(-1)/1.5))
+i4 = I44 * np.sin(2 * cmath.acos(-1) * F * t + ARG_I4 - cmath.acos(-1)/1.5)
+i5 = I55 * np.sin(2 * cmath.acos(-1) * F * t + ARG_I5 - cmath.acos(-1)/1.5)
+i6 = I66 * np.sin(2 * cmath.acos(-1) * F * t + ARG_I6 - cmath.acos(-1)/1.5)
+
+u1 = (U11 * np.sin(2 * cmath.acos(-1) * F * t + ARG_U1))
+u2 = U22 * np.sin(2 * cmath.acos(-1) * F * t + ARG_U2)
+u3 = U33 * np.sin(2 * cmath.acos(-1) * F * t + ARG_U3)
+u4 = U44 * np.sin(2 * cmath.acos(-1) * F * t + ARG_U4)
+u5 = -(U55 * np.sin(2 * cmath.acos(-1) * F * t + ARG_U5))
+u6 = U66 * np.sin(2 * cmath.acos(-1) * F * t + ARG_U6)
+
+plt.figure(figsize=(10, 6))
+plt.plot(t, i1, label='i1')
+plt.plot(t, i2, label='i2')
+plt.plot(t, i3, label='i3')
+plt.plot(t, i4, label='i4')
+plt.plot(t, i5, label='i5')
+plt.title('Изменение мгновенных значений тока в ветвях схемы')
+plt.xlabel('Время (с)')
+plt.ylabel('Ток (A)')
+plt.legend()
+plt.grid()
+plt.show(block = True)
+plt.interactive(False)
+
+plt.figure(figsize=(10, 6))
+plt.plot(t, u1, label='u1')
+plt.plot(t, u4, label='u4')
+plt.plot(t, u5, label='u5')
+plt.plot(t, u6, label='u6')
+plt.title('Изменение мгновенных значений напряжений в ветвях схемы')
+plt.xlabel('Время (с)')
+plt.ylabel('Напряжение (В)')
+plt.legend()
+plt.grid()
+plt.show(block = True)
+plt.interactive(False)
+
+print("токи:", I1, I2, I3, I4, I5, I6,)
+print("напряжения:" ,U1, U2, U3, U4, U5, U6,)
+print("аргументы токов:" ,ARG_I1, ARG_I2, ARG_I3, ARG_I4, ARG_I5, ARG_I6)
+print("аргументы напряжений:" ,ARG_U1, ARG_U2, ARG_U3, ARG_U4, ARG_U5, ARG_U6)
